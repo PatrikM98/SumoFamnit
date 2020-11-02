@@ -11,8 +11,8 @@ public class Main {
         var homeDir = System.getProperty("user.home");
         Process p = null;
         ProcessBuilder pb = new ProcessBuilder("python randomTrips.py -n network.net.xml -r network.rou.xml -e 50 -l");
-        pb.directory(new File(homeDir + "\\IdeaProjects\\Sumo\\data"));
-        var process = pb.start();
+        pb.directory(new File(homeDir+"\\IdeaProjects\\Sumo\\data"));
+        var process  = pb.start();
         try (var reader = new BufferedReader(
                 new InputStreamReader(process.getInputStream()))) {
 
@@ -24,6 +24,7 @@ public class Main {
 
         }
     }
+}
 	/*Process p = Runtime.getRuntime().exec("python ../../../data/randomTrips.py -n network.net.xml -r network.rou.xml -e 50 -l");
         printResults(p);
     }
@@ -35,4 +36,3 @@ public class Main {
             System.out.println(line);
         }
     }*/
-}
