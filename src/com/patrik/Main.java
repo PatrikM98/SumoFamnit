@@ -1,7 +1,10 @@
 package com.patrik;
 
+import com.sun.xml.ws.util.Constants;
 import de.tudresden.sumo.cmd.*;
+import de.tudresden.sumo.util.SumoCommand;
 import de.tudresden.ws.container.SumoColor;
+import de.tudresden.ws.container.SumoStringList;
 import de.tudresden.ws.container.SumoVehicleData;
 import it.polito.appeal.traci.SumoTraciConnection;
 
@@ -14,7 +17,7 @@ import java.io.InputStreamReader;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        MakeRoutes();
+        //MakeRoutes();
 
         String sumo_bin = "sumo-gui";
         String config_file = "data/config.sumocfg";
@@ -31,15 +34,21 @@ public class Main {
             SumoTraciConnection conn = new SumoTraciConnection(sumo_bin, config_file);
             conn.addOption("step-length", step_length + "");
             conn.addOption("start", "true"); //start sumo immediately
-
+            SumoStringList x = new SumoStringList();
+            x.add("-150996422#0");
+            x.add("194452010#2");
             //start Traci Server
             conn.runServer();
-
             for (int i = 0; i < 360000; i++) {
 
+                conn.do_job_get(Simulation.findRoute("-150996422#0","194452010#2","DEFAULT_VEHTYPE",0,0));
+                System.out.println(conn.do_job_get(Simulation.findRoute("-150996422#0","194452010#2","DEFAULT_VEHTYPE",0,0)));
                 conn.do_timestep();
-                System.out.println(conn.do_job_get(Vehicle.getPosition("1")));
-                //conn.do_job_set(Vehicle.setColor(i+"", new SumoColor(255,255,51,100)));
+                //conn.do_job_set(Vehicle.setColor(""+i, new SumoColor(255,255,51,100)));
+                ;
+                conn.do_job_set(Vehicle.addFull("v" + i, "r"+i, "DEFAULT_VEHTYPE", "now", "0", "0", "max", "current", "max", "current", "", "", "", 0, 0));
+                //conn.do_job_set(Vehicle.setRoute("v"+i,(SumoStringList)command));
+
             }
 
             conn.close();
@@ -49,17 +58,17 @@ public class Main {
         }
     }
 
-    public static void MakeRoutes() throws IOException{
+    public static void MakeRoutes() throws IOException {
         String path = System.getProperty("user.dir");
         String separator = System.getProperty("file.separator");
         ProcessBuilder builder;
         if (System.getProperty("os.name").startsWith("Windows")) {
-            builder = new ProcessBuilder(/*--vehicle-class bus --trip-attributes="maxSpeed=\"27.8\""*/
-                    "cmd.exe", "/c", "cd \"" + path + separator + "data\" && python randomTrips.py -n network.net.xml -r network.rou.xml -e 100 -l  --trip-attributes=\"departLane=\"\"best\\\" departSpeed=\\\"max\\\" departPos=\\\"random\\\"\"");
-        }else{
+            builder = new ProcessBuilder(/*--vehicle-class bus --trip-attributes="maxSpeed=\"27.8\""                   \\//         network.rou.xml -e 100 -l --trip-attributes="departLane=""best\" departSpeed=\"max\" departPos=\"random\""*/
+                    "cmd.exe", "/c", "cd \"" + path + separator + "data\" && python randomTrips.py -n network.net.xml ");
+        } else {
             builder = new ProcessBuilder(
-                    "bash", "-c", "cd \"" + path + separator + "data\" && python randomTrips.py -n network.net.xml -r network.rou.xml -e 100 -l");
-            }
+                    "bash", "-c", "cd \"" + path + separator + "data\" && python randomTrips.py -n network.net.xml ");
+        }
         builder.redirectErrorStream(true);
         Process p = builder.start();
         BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
