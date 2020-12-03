@@ -2,8 +2,10 @@ package com.patrik;
 
 import com.sun.xml.ws.util.Constants;
 import de.tudresden.sumo.cmd.*;
+import de.tudresden.sumo.subscription.SumoDomain;
 import de.tudresden.sumo.util.SumoCommand;
 import de.tudresden.ws.container.SumoColor;
+import de.tudresden.ws.container.SumoStage;
 import de.tudresden.ws.container.SumoStringList;
 import de.tudresden.ws.container.SumoVehicleData;
 import it.polito.appeal.traci.SumoTraciConnection;
@@ -34,20 +36,23 @@ public class Main {
             SumoTraciConnection conn = new SumoTraciConnection(sumo_bin, config_file);
             conn.addOption("step-length", step_length + "");
             conn.addOption("start", "true"); //start sumo immediately
-            SumoStringList x = new SumoStringList();
-            x.add("-150996422#0");
-            x.add("194452010#2");
             //start Traci Server
             conn.runServer();
             for (int i = 0; i < 360000; i++) {
 
-                conn.do_job_get(Simulation.findRoute("-150996422#0","194452010#2","DEFAULT_VEHTYPE",0,0));
-                System.out.println(conn.do_job_get(Simulation.findRoute("-150996422#0","194452010#2","DEFAULT_VEHTYPE",0,0)));
+
+                //System.out.println();
+
+                SumoStage x = (SumoStage)conn.do_job_get(Simulation.findRoute("-150996422#0","194452010#2","DEFAULT_VEHTYPE",0,0));
+                for (String j: x.edges
+                     ) {
+                    System.out.println(j);
+                }
                 conn.do_timestep();
                 //conn.do_job_set(Vehicle.setColor(""+i, new SumoColor(255,255,51,100)));
-                ;
-                conn.do_job_set(Vehicle.addFull("v" + i, "r"+i, "DEFAULT_VEHTYPE", "now", "0", "0", "max", "current", "max", "current", "", "", "", 0, 0));
-                //conn.do_job_set(Vehicle.setRoute("v"+i,(SumoStringList)command));
+
+                conn.do_job_set(Vehicle.addFull("v" + i, ""+i, "DEFAULT_VEHTYPE", "now", "0", "0", "max", "current", "max", "current", "", "", "", 0, 0));
+                conn.do_job_set(Vehicle.setRoute("v"+i,x.edges));
 
             }
 
