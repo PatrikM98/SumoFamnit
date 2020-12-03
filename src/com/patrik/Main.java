@@ -10,6 +10,9 @@ import de.tudresden.ws.container.SumoStringList;
 import de.tudresden.ws.container.SumoVehicleData;
 import it.polito.appeal.traci.SumoTraciConnection;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 
 import javax.xml.parsers.DocumentBuilder;
@@ -25,7 +28,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         //MakeRoutes();
 
-        String sumo_bin = "sumo";
+        String sumo_bin = "sumo-gui";
         String config_file = "data/config.sumocfg";
         double step_length = 0.1;
 
@@ -50,20 +53,22 @@ public class Main {
             File trips_file = new File(path + "\\data\\trips.trips.xml");
             Document doc = builder.parse(trips_file);
             //doc.getDocumentElement().normalize();
-            System.out.println(doc.getDocumentElement().getAttribute("trips"));
+            NodeList nList = doc.getDocumentElement().getChildNodes();
 
             for (int i = 0; i < 3600; i++) {
+                Node nNode = nList.item(i%20);
+                //System.out.println(nNode.getNodeName());
 
-
-                //System.out.println();
-
-                SumoStage x = (SumoStage)conn.do_job_get(Simulation.findRoute("294817175","-774963561","DEFAULT_VEHTYPE",0,0));
-                conn.do_timestep();
-                //conn.do_job_set(Vehicle.setColor(""+i, new SumoColor(255,255,51,100)));
-                conn.do_job_set(Route.add("r"+i,x.edges));
-                conn.do_job_set(Vehicle.addFull("v" + i, "r"+i, "DEFAULT_VEHTYPE", "now", "0", "0", "max", "current", "max", "current", "", "", "", 0, 0));
-                conn.do_job_set(Vehicle.setColor("v"+i,new SumoColor(255,255,55,100)));
-
+                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElement = (Element) nNode;
+                    System.out.println(eElement.getAttribute("from"));
+                    SumoStage x = (SumoStage) conn.do_job_get(Simulation.findRoute(eElement.getAttribute("from"), eElement.getAttribute("to"), "DEFAULT_VEHTYPE", 0, 0));
+                    conn.do_timestep();
+                    //conn.do_job_set(Vehicle.setColor(""+i, new SumoColor(255,255,51,100)));
+                    conn.do_job_set(Route.add("r" + i, x.edges));
+                    conn.do_job_set(Vehicle.addFull("v" + i, "r" + i, "DEFAULT_VEHTYPE", "now", "0", "0", "max", "current", "max", "current", "", "", "", 0, 0));
+                    conn.do_job_set(Vehicle.setColor("v" + i, new SumoColor(255, 255, 55, 100)));
+                }
             }
 
             conn.close();
