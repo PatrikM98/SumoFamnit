@@ -56,7 +56,8 @@ public class Main {
             NodeList nList = doc.getDocumentElement().getChildNodes();
 
             for (int i = 0; i < 3600; i++) {
-                Node nNode = nList.item(i%20);
+                if (i%50==21 || i%50==35) continue;
+                Node nNode = nList.item(i%50);
                 //System.out.println(nNode.getNodeName());
 
                 if (nNode.getNodeType() == Node.ELEMENT_NODE) {
