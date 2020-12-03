@@ -50,9 +50,9 @@ public class Main {
                 }
                 conn.do_timestep();
                 //conn.do_job_set(Vehicle.setColor(""+i, new SumoColor(255,255,51,100)));
-
-                conn.do_job_set(Vehicle.addFull("v" + i, ""+i, "DEFAULT_VEHTYPE", "now", "0", "0", "max", "current", "max", "current", "", "", "", 0, 0));
-                conn.do_job_set(Vehicle.setRoute("v"+i,x.edges));
+                conn.do_job_set(Route.add("r"+i,x.edges));
+                conn.do_job_set(Vehicle.addFull("v" + i, "r"+i, "DEFAULT_VEHTYPE", "now", "0", "0", "max", "current", "max", "current", "", "", "", 0, 0));
+                conn.do_job_set(Vehicle.setColor("v"+i,new SumoColor(255,255,55,100)));
 
             }
 
