@@ -28,6 +28,8 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         //MakeRoutes();
+        String[] starting_egdes = {"294817175", "182945654"};
+        String[] ending_egdes = {"197451487#1", "-774963561", "150941573", "124431339#1"};
 
 
         String sumo_bin = "sumo-gui";
@@ -64,7 +66,7 @@ public class Main {
 
                /* if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElement = (Element) nNode;*/
-                    SumoStage x = (SumoStage) conn.do_job_get(Simulation.findRoute(randomEdge(), randomEdge(), "DEFAULT_VEHTYPE", 0, 0));
+                    SumoStage x = (SumoStage) conn.do_job_get(Simulation.findRoute(randomEdge(starting_egdes), randomEdge(ending_egdes), "DEFAULT_VEHTYPE", 0, 0));
                     conn.do_timestep();
                     //conn.do_job_set(Vehicle.setColor(""+i, new SumoColor(255,255,51,100)));
                     conn.do_job_set(Route.add("r" + i, x.edges));
@@ -104,8 +106,8 @@ public class Main {
         }
     }
 
-    public static String randomEdge(){
-        String[] edges = {"294817175", "182945654", "-150941573", "168425249#1", "168425243#1", "150942070#", "-150942070#4", "-150942070#1", "150942070#0", "168425233#1", "168425927#1", "-774963561", "25502104#3", "26964129#1", "26964129#1", "124431339#1"};
+    public static String randomEdge( String[] edges){
+        //String[] edges = {"294817175", "182945654", "197451487#1", "-774963561", "150941573", "124431339#1"};
         Edge[] edge_objects = new Edge[edges.length];
         for (int i = 0; i < edge_objects.length; i++) {
             edge_objects[i] = new Edge(edges[i]);
