@@ -28,8 +28,8 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         //MakeRoutes();
-        String[] starting_egdes = {"294817175", "182945654"};
-        String[] ending_egdes = {"197451487#1", "-774963561", "150941573", "124431339#1"};
+        String[] starting_egdes = {"294817175", "182945654","197451487#1", "-774963561", "150941573", "124431339#1", "858235724#1", "156220117#1", "180880931#3","156945806","451549189#2","-35009201","-197169560","-196969236","180879516#0","168423795"};
+        String[] ending_egdes = {"197451487#1", "-774963561", "150941573", "124431339#1", "294817155", "294817173", "858235724#1", "35147622#6", "-731202328#0", "156220117#1","168425243#1","-150942070#4","150942070#3","-150942070#1", "150942070#0", "164947587", "35009201","197169560","180874073","180874076","200142721","200142754","200142755","-228766404#5","-25501963#0","89536749#4","151225883#0", "-150973118"};
 
 
         String sumo_bin = "sumo-gui";
@@ -60,6 +60,7 @@ public class Main {
             NodeList nList = doc.getDocumentElement().getChildNodes();*/
 
             for (int i = 0; i < 3600; i++) {
+                Random r = new Random();
                /* if (i%50==21 || i%50==35) continue;
                 Node nNode = nList.item(i%50);*/
                 //System.out.println(nNode.getNodeName());
@@ -70,7 +71,7 @@ public class Main {
                     conn.do_timestep();
                     //conn.do_job_set(Vehicle.setColor(""+i, new SumoColor(255,255,51,100)));
                     conn.do_job_set(Route.add("r" + i, x.edges));
-                    conn.do_job_set(Vehicle.addFull("v" + i, "r" + i, "DEFAULT_VEHTYPE", "now", "0", "0", "max", "current", "max", "current", "", "", "", 0, 0));
+                    conn.do_job_set(Vehicle.addFull("v" + i, "r" + i, "DEFAULT_VEHTYPE", ""+ r.nextInt(3600), "0", "0", "max", "current", "max", "current", "", "", "", 0, 0));
                     conn.do_job_set(Vehicle.setColor("v" + i, new SumoColor(255, 255, 55, 100)));
                 //}
             }
