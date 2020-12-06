@@ -21,12 +21,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Random;
 
 
 public class Main {
 
     public static void main(String[] args) throws IOException {
         //MakeRoutes();
+
 
         String sumo_bin = "sumo-gui";
         String config_file = "data/config.sumocfg";
@@ -47,29 +49,28 @@ public class Main {
             conn.runServer();
 
 
-            String path = System.getProperty("user.dir");
+            /*String path = System.getProperty("user.dir");
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             File trips_file = new File(path + "\\data\\trips.trips.xml");
             Document doc = builder.parse(trips_file);
             //doc.getDocumentElement().normalize();
-            NodeList nList = doc.getDocumentElement().getChildNodes();
+            NodeList nList = doc.getDocumentElement().getChildNodes();*/
 
             for (int i = 0; i < 3600; i++) {
-                if (i%50==21 || i%50==35) continue;
-                Node nNode = nList.item(i%50);
+               /* if (i%50==21 || i%50==35) continue;
+                Node nNode = nList.item(i%50);*/
                 //System.out.println(nNode.getNodeName());
 
-                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                    Element eElement = (Element) nNode;
-                    System.out.println(eElement.getAttribute("from"));
-                    SumoStage x = (SumoStage) conn.do_job_get(Simulation.findRoute(eElement.getAttribute("from"), eElement.getAttribute("to"), "DEFAULT_VEHTYPE", 0, 0));
+               /* if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElement = (Element) nNode;*/
+                    SumoStage x = (SumoStage) conn.do_job_get(Simulation.findRoute(randomEdge(), randomEdge(), "DEFAULT_VEHTYPE", 0, 0));
                     conn.do_timestep();
                     //conn.do_job_set(Vehicle.setColor(""+i, new SumoColor(255,255,51,100)));
                     conn.do_job_set(Route.add("r" + i, x.edges));
                     conn.do_job_set(Vehicle.addFull("v" + i, "r" + i, "DEFAULT_VEHTYPE", "now", "0", "0", "max", "current", "max", "current", "", "", "", 0, 0));
                     conn.do_job_set(Vehicle.setColor("v" + i, new SumoColor(255, 255, 55, 100)));
-                }
+                //}
             }
 
             conn.close();
@@ -101,5 +102,17 @@ public class Main {
             }
             System.out.println(line);
         }
+    }
+
+    public static String randomEdge(){
+        String[] edges = {"294817175", "182945654", "-150941573", "168425249#1", "168425243#1", "150942070#", "-150942070#4", "-150942070#1", "150942070#0", "168425233#1", "168425927#1", "-774963561", "25502104#3", "26964129#1", "26964129#1", "124431339#1"};
+        Edge[] edge_objects = new Edge[edges.length];
+        for (int i = 0; i < edge_objects.length; i++) {
+            edge_objects[i] = new Edge(edges[i]);
+        }
+        Random r = new Random();
+        //System.out.println(edge_objects.length);
+        //System.out.println(r.nextInt(edge_objects.length));
+        return edge_objects[r.nextInt(edge_objects.length)].getEdge_id();
     }
 }
